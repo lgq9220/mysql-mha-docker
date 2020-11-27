@@ -9,19 +9,14 @@ until MYSQL_PWD=${MYSQL_ROOT_PASSWORD} mysql -u root -h mysql_master; do
   sleep 5
 done
 
-# 创建用于同步的用户
-MYSQL_PWD=${MYSQL_ROOT_PASSWORD} mysql -u root \
--e "CREATE USER '${MYSQL_REPLICATION_USER}'@'%' IDENTIFIED BY '${MYSQL_REPLICATION_PASSWORD}'; \
-GRANT REPLICATION SLAVE ON *.* TO '${MYSQL_REPLICATION_USER}'@'%';"
-
 # 查看主服务器的状态
-MASTER_STATUS=$(MYSQL_PWD=${MYSQL_ROOT_PASSWORD} mysql -u root -h mysql_master -e "show master status")
+MASTER_STATUS=$(MYSQL_PWD=${MYSQL_ROOT_PASSWORD} mysql -u root -h mysql_master -e "show master status\G")
 # binlog文件名字,对应 File 字段,值如: mysql-bin.000004
-MASTER_LOG_FILE=$(echo "${MASTER_STATUS}" | awk '{print $6}')
+MASTER_LOG_FILE=$(echo "${MASTER_STATUS}" | awk 'NR!=1 && $1=="File:" {print $2}')
 # binlog位置,对应 Position 字段,值如: 1429
-MASTER_LOG_POS=$(echo "${MASTER_STATUS}" | awk '{print $7}')
+MASTER_LOG_POS=$(echo "${MASTER_STATUS}" | awk 'NR!=1 && $1=="Position:" {print $2}')
 
-# 设置主节点的同步sql
+# 设置主节点的信息
 MYSQL_PWD=${MYSQL_ROOT_PASSWORD} mysql -u root -e \
 "CHANGE MASTER TO MASTER_HOST='mysql-master', \
 	      MASTER_USER='${MYSQL_REPLICATION_USER}', \
