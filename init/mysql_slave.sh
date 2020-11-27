@@ -5,8 +5,8 @@ echo ">>>>start to init slave"
 set -e
 
 until MYSQL_PWD=${MYSQL_ROOT_PASSWORD} mysql -u root -h mysql_master; do
-  echo >&2 "MySQL master is unavailable - sleeping"
-  sleep 3
+  echo "MySQL master is unavailable - sleeping"
+  sleep 5
 done
 
 # 创建用于同步master的用户
