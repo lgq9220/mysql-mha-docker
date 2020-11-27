@@ -9,6 +9,11 @@ until MYSQL_PWD=${MYSQL_ROOT_PASSWORD} mysql -u root -h mysql_master; do
   sleep 5
 done
 
+# 创建用于同步的用户
+MYSQL_PWD=${MYSQL_ROOT_PASSWORD} mysql -u root \
+-e "CREATE USER '${MYSQL_REPLICATION_USER}'@'%' IDENTIFIED BY '${MYSQL_REPLICATION_PASSWORD}'; \
+GRANT REPLICATION SLAVE ON *.* TO '${MYSQL_REPLICATION_USER}'@'%' IDENTIFIED BY '${MYSQL_REPLICATION_PASSWORD}';"
+
 # 查看主服务器的状态
 MASTER_STATUS=$(MYSQL_PWD=${MYSQL_ROOT_PASSWORD} mysql -u root -h mysql_master -e "show master status\G")
 # binlog文件名字,对应 File 字段,值如: mysql-bin.000004
