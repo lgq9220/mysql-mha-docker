@@ -13,3 +13,8 @@ character-set-server=utf8mb4
 collation-server=utf8mb4_general_ci
 # 中继日志
 relay_log=mysql-relay-bin
+# 忽略系统库的数据同步
+binlog-ignore-db=information_schema 
+binlog-ignore-db=mysql 
+binlog-ignore-db=performance_schema 
+binlog-ignore-db=sys
