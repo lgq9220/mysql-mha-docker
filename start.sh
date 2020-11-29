@@ -57,5 +57,5 @@ hostname=mysql_slave2
 " >./conf/mha_manager.conf
 
 #################### docker-compose初始化 ####################
-# docker-compose build
-# docker-compose up -d
+docker-compose build
+docker-compose up -d
