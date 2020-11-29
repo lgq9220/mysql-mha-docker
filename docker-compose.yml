@@ -1,11 +1,17 @@
 #构建mysql-mha环境
 version: "3.3"
 services:
-  mysql_master: &mysql_master # 镜像
-    image: mysql:5.7
+  mysql_master: &mysql_master 
+    # 使用dockerfile构建镜像
+    build:
+      context: ./image/mha4mysql-node
+      dockerfile: Dockerfile
     # 环境变量文件
     env_file:
-      - ./env/mysql_master.env
+      - ./env/mha4mysql-node.env
+    # 指定特殊的环境变量
+    environment:
+      - KEY_SUFFIX=mysql_master    
     # 容器名称
     container_name: mysql_master
     # 在容器退出时总是重启
@@ -15,6 +21,8 @@ services:
       - 3306:3306
     # 数据卷挂载
     volumes:
+      # mha 容器间共享目录
+      - ./data/mha_share:/root/mha_share
       # mysql 配置文件
       - ./conf/mysql_master.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
       # myqsl 工作目录
@@ -22,20 +30,20 @@ services:
       # mysql 数据初始化
       - ./init/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
       - ./init/data.sql:/docker-entrypoint-initdb.d/2-data.sql
+      # mha-node ssh初始化、生成key
+      - ./init/ssh_init.sh:/docker-entrypoint-initdb.d/3-ssh_init.sh
       # mysql_master 初始化配置
-      - ./init/mysql_master.sh:/docker-entrypoint-initdb.d/3-init.sh
+      - ./init/mysql_master.sh:/docker-entrypoint-initdb.d/4-mysql_init.sh
     # 容器启动后默认执行的命令
-    command: [
-        "--server-id=1",
-        # "--innodb_flush_log_at_trx_commit=1",
-        # "--sync_binlog=1"
-      ]
+    command: ["--server-id=1"]
 
   mysql_slave1:
-    # 基础mysql_master的属性
+    # 继承mysql_master的属性
     <<: *mysql_master
     env_file:
-      - ./env/mysql_slave.env
+      - ./env/mha4mysql-node.env
+    environment:
+      - KEY_SUFFIX=mysql_slave1      
     container_name: mysql_slave1
     ports:
       - 33061:3306
@@ -43,33 +51,56 @@ services:
     depends_on:
       - mysql_master
     volumes:
+      - ./data/mha_share:/root/mha_share
       - ./conf/mysql_slave.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
       - ./data/slave1:/var/lib/mysql
       - ./init/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
       - ./init/data.sql:/docker-entrypoint-initdb.d/2-data.sql
+      - ./init/ssh_init.sh:/docker-entrypoint-initdb.d/3-ssh_init.sh
       # mysql_slave 初始化配置
-      - ./init/mysql_slave.sh:/docker-entrypoint-initdb.d/3-init.sh
-    command: [
-      "--server-id=21",
-      "--read_only=1"
-    ]
+      - ./init/mysql_slave.sh:/docker-entrypoint-initdb.d/4-mysql_init.sh
+    command: ["--server-id=21"]
 
   mysql_slave2:
     <<: *mysql_master
     env_file:
-      - ./env/mysql_slave.env
+      - ./env/mha4mysql-node.env
+    environment:
+      - KEY_SUFFIX=mysql_slave2  
     container_name: mysql_slave2
     ports:
       - 33062:3306
     depends_on:
       - mysql_master
     volumes:
+      - ./data/mha_share:/root/mha_share
       - ./conf/mysql_slave.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
       - ./data/slave2:/var/lib/mysql
       - ./init/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
       - ./init/data.sql:/docker-entrypoint-initdb.d/2-data.sql
-      - ./init/mysql_slave.sh:/docker-entrypoint-initdb.d/3-init.sh
-    command: [
-      "--server-id=22",
-      "--read_only=1"
-    ]
+      - ./init/ssh_init.sh:/docker-entrypoint-initdb.d/3-ssh_init.sh
+      - ./init/mysql_slave.sh:/docker-entrypoint-initdb.d/4-mysql_init.sh
+    command: ["--server-id=22"]
+  mha_manager:
+    # 使用dockerfile构建镜像
+    build:
+      context: ./image/mha4mysql-manager
+      dockerfile: Dockerfile
+    env_file:
+      - ./env/mha4mysql-manager.env  
+    environment:
+      - KEY_SUFFIX=mha_manager  
+    container_name: mha_manager
+    depends_on:
+      - mysql_master
+      - mysql_slave1
+      - mysql_slave2
+    restart: always  
+    volumes:
+      - ./data/mha_share:/root/mha_share
+      - "./conf/mha_manager.conf:/etc/mha/mha_manager.conf"
+      - "./data/mha_manager:/usr/local/mha"
+      - ./init/ssh_init.sh:/docker-entrypoint-initdb.d/1-ssh_init.sh
+      - ./init/mha_manager.sh:/docker-entrypoint-initdb.d/2-mha_manager_init.sh
+    # 防止启动后退出  
+    entrypoint: "tail -f /dev/null"  

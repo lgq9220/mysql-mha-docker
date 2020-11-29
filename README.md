@@ -263,19 +263,27 @@ services:
 
 ```shell
 #运行命令
-docker-compose -f /root/mysql-mha/docker-compose-mysql-mha.yml up
+docker-compose up
 
 #删除命令
-docker-compose -f /root/mysql-mha/docker-compose-mysql-mha.yml down --rmi local
+docker-compose down --rmi local
 ```
 
 
 
 ```shell
-git clone https://gitee.com/IceHL/mysql-mha.git && cd mysql-mha && sudo chmod +x start.sh && ./start.sh
+git clone https://gitee.com/IceHL/mysql-mha.git && \
+cd mysql-mha && \
+sudo chmod +x start.sh reset.sh shutdown.sh && \
+./start.sh
 ```
 
 ```
 chmod +x reset.sh && ./reset.sh
 ```
 
+
+
+一定要做的 systemctl stop firewalld，不关闭的话，docker容器无法访问外网就哭吧
+
+关闭后，一定要记得将docker重启

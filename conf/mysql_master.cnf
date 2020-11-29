@@ -11,6 +11,7 @@ symbolic-links=0
 #字符集设置
 character-set-server=utf8mb4
 collation-server=utf8mb4_general_ci
+
 # 开启binlog
 log-bin=mysql-bin
 # 忽略系统库的数据同步
