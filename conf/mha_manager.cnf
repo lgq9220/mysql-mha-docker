@@ -1,4 +1,3 @@
-
 [server default]
 user=root
 password=root
@@ -13,12 +12,17 @@ repl_user=hooray
 repl_password=hooray
 
 # 配置host
-[server0]
-hostname=mysql_master
-
 [server1]
-hostname=mysql_slave1
+hostname=mysql_master
+master_binlog_dir=/var/lib/mysql
 
 [server2]
+hostname=mysql_slave1
+candidate_master=1
+master_binlog_dir=/var/lib/mysql
+
+[server3]
 hostname=mysql_slave2
+candidate_master=1
+master_binlog_dir=/var/lib/mysql
 

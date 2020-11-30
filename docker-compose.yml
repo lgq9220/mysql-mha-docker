@@ -19,7 +19,7 @@ services:
     # 数据卷挂载
     volumes:
       # mha 容器间共享目录
-      - ./data/mha_share:/root/mha_share
+      - ./data/share_sshkeys:/root/share_sshkeys
       # mysql 配置文件
       - ./conf/mysql_master.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
       # myqsl 工作目录
@@ -48,7 +48,7 @@ services:
     depends_on:
       - mysql_master
     volumes:
-      - ./data/mha_share:/root/mha_share
+      - ./data/share_sshkeys:/root/share_sshkeys
       - ./conf/mysql_slave.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
       - ./data/slave1:/var/lib/mysql
       - ./init/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
@@ -70,7 +70,7 @@ services:
     depends_on:
       - mysql_master
     volumes:
-      - ./data/mha_share:/root/mha_share
+      - ./data/share_sshkeys:/root/share_sshkeys
       - ./conf/mysql_slave.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
       - ./data/slave2:/var/lib/mysql
       - ./init/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
@@ -89,7 +89,7 @@ services:
       - mysql_slave2
     restart: always
     volumes:
-      - ./data/mha_share:/root/mha_share
+      - ./data/share_sshkeys:/root/share_sshkeys
       # 挂载mha配置文件
       - ./conf/mha_manager.cnf:/etc/mha/mha_manager.cnf
       # 挂载mha数据文件

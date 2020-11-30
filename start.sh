@@ -31,14 +31,19 @@ repl_user=${MYSQL_REPLICATION_USER}
 repl_password=${MYSQL_REPLICATION_PASSWORD}
 
 # 配置host
-[server0]
-hostname=mysql_master
-
 [server1]
-hostname=mysql_slave1
+hostname=mysql_master
+master_binlog_dir=/var/lib/mysql
 
 [server2]
+hostname=mysql_slave1
+candidate_master=1
+master_binlog_dir=/var/lib/mysql
+
+[server3]
 hostname=mysql_slave2
+candidate_master=1
+master_binlog_dir=/var/lib/mysql
 " >./conf/mha_manager.cnf
 
 #################### docker-compose初始化 ####################
@@ -57,4 +62,4 @@ docker exec -it mysql_slave1 /bin/bash /etc/init.d/script/ssh_auth_keys.sh
 docker exec -it mysql_slave2 /bin/bash /etc/init.d/script/ssh_auth_keys.sh
 docker exec -it mha_manager /bin/bash /etc/init.d/script/ssh_auth_keys.sh
 # 启动mha
-docker exec -it mha_manager masterha_manager /etc/init.d/script/mha_manager.sh
+docker exec -it mha_manager /bin/bash /etc/init.d/script/mha_manager.sh
