@@ -12,23 +12,29 @@ symbolic-links=0
 character-set-server=utf8mb4
 collation-server=utf8mb4_general_ci
 
-# 中继日志
-relay_log=mysql-relay-bin
-# 只读
-read_only=1
-
-# 并行复制
-slave-parallel-type=LOGICAL_CLOCK
-slave-parallel-workers=16
-slave_pending_jobs_size_max = 2147483648
-master_info_repository=TABLE
-relay_log_info_repository=TABLE
-relay_log_recovery=ON
-
 # 开启binlog
 log-bin=mysql-bin
+# 每次写入都同步到binlog
+binlog_format=ROW
+sync-binlog=1
 # 忽略系统库的数据同步
 binlog-ignore-db=information_schema 
 binlog-ignore-db=mysql 
 binlog-ignore-db=performance_schema 
 binlog-ignore-db=sys
+
+# 中继日志
+relay_log=mysql-relay-bin
+# 只读
+read_only=1
+relay_log_info_repository=TABLE
+relay_log_recovery=ON
+
+# 并行复制
+slave-parallel-type=LOGICAL_CLOCK
+slave-parallel-workers=16
+master_info_repository=TABLE
+
+# 自动开启半同步复制 
+plugin_load="rpl_semi_sync_slave=semisync_slave.so"
+rpl_semi_sync_slave_enabled=1

@@ -22,9 +22,7 @@ MYSQL_PWD=${MYSQL_ROOT_PASSWORD} mysql -u root -e \
 	      MASTER_USER='${MYSQL_REPLICATION_USER}', \
 	      MASTER_PASSWORD='${MYSQL_REPLICATION_PASSWORD}', \
 	      MASTER_LOG_FILE='${MASTER_LOG_FILE}', \
-	      MASTER_LOG_POS=${MASTER_LOG_POS};
-install plugin rpl_semi_sync_slave soname 'semisync_slave.so';
-set global rpl_semi_sync_slave_enabled=1;
+	      MASTER_LOG_POS=${MASTER_LOG_POS}; \
 START SLAVE;"
 
 # 启动ssh服务

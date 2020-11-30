@@ -287,3 +287,9 @@ chmod +x reset.sh && ./reset.sh
 一定要做的 systemctl stop firewalld，不关闭的话，docker容器无法访问外网就哭吧
 
 关闭后，一定要记得将docker重启
+
+
+
+
+
+ssh-keygen -t rsa -N '' -f /root/.ssh/id_rsa
