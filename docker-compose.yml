@@ -2,10 +2,8 @@
 version: "3.3"
 services:
   mysql_master: &mysql_master 
-    # 使用dockerfile构建镜像
-    build:
-      context: ./image/mha4mysql-node
-      dockerfile: Dockerfile
+    # 使用制作好的镜像
+    image: hooray/mha4mysql-node
     # 环境变量文件
     env_file:
       - ./env/mha4mysql-node.env
@@ -82,10 +80,7 @@ services:
       - ./init/mysql_slave.sh:/docker-entrypoint-initdb.d/4-mysql_init.sh
     command: ["--server-id=22"]
   mha_manager:
-    # 使用dockerfile构建镜像
-    build:
-      context: ./image/mha4mysql-manager
-      dockerfile: Dockerfile
+    image: hooray/mha4mysql-manager
     env_file:
       - ./env/mha4mysql-manager.env  
     environment:
