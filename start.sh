@@ -8,9 +8,9 @@ MYSQL_REPLICATION_PASSWORD="hooray"      # 主服务器允许从服务器登录�
 
 #################### 环境文件生成 ####################
 # 生成mysql.env
-echo "# mysql root账号密码
+echo "# MySQL root 账号密码
 MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-# 数据库配置
+# 用于 MySQL 集群间同步的账号密码
 MYSQL_REPLICATION_USER=${MYSQL_REPLICATION_USER}
 MYSQL_REPLICATION_PASSWORD=${MYSQL_REPLICATION_PASSWORD}
 " >./env/mysql.env

@@ -1,7 +1,8 @@
 #构建mysql-mha环境
 version: "3.3"
 services:
-  mysql_master: &mysql_master # 使用制作好的镜像
+  mysql_master: &mysql_master 
+    # 使用制作好的镜像
     image: hooray/mha4mysql-node
     # 环境变量文件
     env_file:
