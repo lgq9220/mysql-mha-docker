@@ -18,32 +18,42 @@ MYSQL_REPLICATION_PASSWORD=${MYSQL_REPLICATION_PASSWORD}
 #################### 配置文件生成 ####################
 # 生成mha_manager.cnf文件
 echo "[server default]
+# mysql用户密码
 user=root
 password=${MYSQL_ROOT_PASSWORD}
+# ssh用户
 ssh_user=root
 
-# 配置工作目录
-manager_workdir=/usr/local/mha
-remote_workdir=/usr/local/mha
+# 工作目录
+manager_workdir=/var/log/masterha/
+remote_workdir=/var/log/masterha/
 
-# 配置mysql的同步用户
+# 主从同步账号
 repl_user=${MYSQL_REPLICATION_USER}
 repl_password=${MYSQL_REPLICATION_PASSWORD}
+ping_interval=1
 
-# 配置host
+# 各服务参数配置
 [server1]
 hostname=mysql_master
+port=3306
 master_binlog_dir=/var/lib/mysql
+ignore_fail=1
+no_master=1
 
 [server2]
 hostname=mysql_slave1
-candidate_master=1
+port=3306
 master_binlog_dir=/var/lib/mysql
+candidate_master=1
+check_repl_delay=0
 
 [server3]
 hostname=mysql_slave2
-candidate_master=1
+port=3306
 master_binlog_dir=/var/lib/mysql
+candidate_master=1
+check_repl_delay=0
 " >./conf/mha_manager.cnf
 
 #################### docker-compose初始化 ####################
@@ -61,5 +71,3 @@ docker exec -it mysql_master /bin/bash /etc/init.d/script/ssh_auth_keys.sh
 docker exec -it mysql_slave1 /bin/bash /etc/init.d/script/ssh_auth_keys.sh
 docker exec -it mysql_slave2 /bin/bash /etc/init.d/script/ssh_auth_keys.sh
 docker exec -it mha_manager /bin/bash /etc/init.d/script/ssh_auth_keys.sh
-# 启动mha
-docker exec -it mha_manager /bin/bash /etc/init.d/script/mha_manager.sh

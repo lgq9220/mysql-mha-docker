@@ -92,8 +92,10 @@ services:
       - ./data/share_sshkeys:/root/share_sshkeys
       # 挂载mha配置文件
       - ./conf/mha_manager.cnf:/etc/mha/mha_manager.cnf
+      # 修复mha无法解析长名称mysql的问题
+      - ./init/NodeUtil.pm:/usr/share/perl5/MHA/NodeUtil.pm
       # 挂载mha数据文件
-      - ./data/mha_manager:/usr/local/mha
+      - ./data/mha_manager:/var/log/masterha/
       - ./init/mha_manager.sh:/etc/init.d/script/mha_manager.sh
       - ./script:/etc/init.d/script
     # 防止启动后退出

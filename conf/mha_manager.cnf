@@ -3,26 +3,31 @@ user=root
 password=root
 ssh_user=root
 
-# 配置工作目录
-manager_workdir=/usr/local/mha
-remote_workdir=/usr/local/mha
+manager_workdir=/var/log/masterha/
+remote_workdir=/var/log/masterha/
 
-# 配置mysql的同步用户
 repl_user=hooray
 repl_password=hooray
+ping_interval=1
 
-# 配置host
 [server1]
 hostname=mysql_master
+port=3306
 master_binlog_dir=/var/lib/mysql
+ignore_fail=1
+no_master=1
 
 [server2]
 hostname=mysql_slave1
-candidate_master=1
+port=3306
 master_binlog_dir=/var/lib/mysql
+candidate_master=1
+check_repl_delay=0
 
 [server3]
 hostname=mysql_slave2
-candidate_master=1
+port=3306
 master_binlog_dir=/var/lib/mysql
+candidate_master=1
+check_repl_delay=0
 

@@ -29,6 +29,7 @@ relay_log=mysql-relay-bin
 read_only=1
 relay_log_info_repository=TABLE
 relay_log_recovery=ON
+relay_log_purge=0
 
 # 并行复制
 slave-parallel-type=LOGICAL_CLOCK

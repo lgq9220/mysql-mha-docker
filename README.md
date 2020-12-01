@@ -275,11 +275,12 @@ docker-compose down --rmi local
 git clone https://gitee.com/IceHL/mysql-mha.git && \
 cd mysql-mha && \
 sudo chmod +x start.sh reset.sh shutdown.sh && \
-./start.sh
+./start.sh && \
+docker exec mha_manager sh -c "./etc/init.d/script/mha_manager.sh"
 ```
 
 ```
-chmod +x reset.sh && ./reset.sh
+./reset.sh
 ```
 
 
