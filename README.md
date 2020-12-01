@@ -689,3 +689,9 @@ Master failover to mysql_slave1(172.18.0.4:3306) completed successfully.
 ```
 
 最后，如果本项目帮助到了你，希望你能够不吝在右上角给我点个 Star，非常感谢。
+
+## 五 参考资料
+
+1. https://github.com/docker-box/mysql-cluster
+2. https://github.com/breeze2/mysql-mha-docker
+3. https://blog.csdn.net/ctypyb2002/article/details/88344274
